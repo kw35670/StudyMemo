@@ -1,0 +1,11 @@
+【mapとforEachの違い】
+mapは戻り値として新しい配列を返すが、forEachは処理をするのみ
+
+【join】
+与えられた配列の要素を指定した文字列として結合する。
+console.log(['Hello', 'World'].join()) // 'Hello,World'
+console.log(['Hello', 'World'].join('/')) // 'Hello/World'
+
+【concat】
+concatメソッドを呼び出した配列に、引数へ渡された配列を結合し、新しい配列として、返す
+console.log([1000, 2000].concat([3000, 4000])) // [1000, 2000, 3000, 4000]

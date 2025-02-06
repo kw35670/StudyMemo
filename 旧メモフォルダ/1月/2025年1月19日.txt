@@ -1,0 +1,10 @@
+【async, await】
+asyncを関数の前につけることで非同期関数を作成でき、Promiseを返す関数を自分で作成できる。
+asyncを使用した関数内の非同期処理にawaitを使用することでその処理が完了するまで次の処理を実行させないことができる。
+asyncがある関数でのみawaitが使用可能。
+
+【Promise】
+resolveはPromise内で処理成功時に実行されるメソッド。.thenメソッドが呼び出される。
+rejectはPromise内で処理失敗時に実行されるメソッド。.catchメソッドが呼び出される。
+Promise.allメソッドは引数のPromiseがすべて実行したか、どれか一つでも失敗したら停止する。
+Promise.raceメソッドは引数のPromiseで最初に実行完了したPromiseオブジェクトを返す。

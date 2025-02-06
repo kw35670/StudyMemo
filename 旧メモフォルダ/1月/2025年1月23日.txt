@@ -1,0 +1,7 @@
+【Json】
+JSファイルでJsonを記載するときは''か""か``で囲う。
+JSON.parse()はJSON形式の文字列をJSのオブジェクトの変換する関数。
+JSON.stringify()はJSオブジェクトをJSON形式に変換する関数。
+
+【Dataオブジェクト】
+const dateObject = new Date(year, monthIndex, day, hours, minutes, seconds, milliseconds);

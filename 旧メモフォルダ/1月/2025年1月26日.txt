@@ -1,0 +1,24 @@
+【DOMContentLoaded】
+HTMLが完全に読み込まれたときの処理を記載する。
+document.addEventListener("DOMContentLoaded", function() {
+  // ここにウェブページが読み込まれた後に実行したいコードを書く
+});
+
+
+【e.preventDefault】
+デフォルトの処理を阻止する。
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+});
+
+
+【HTMLFormElement.reset】
+フォーム入力フィールドを初期状態に戻す。
+document.getElementById('resetButton').addEventListener('click', function() {
+  document.getElementById('myForm').reset();
+});
+
+
+【element.classList.replace】
+クラスを別のクラスに置き換える。
+element.classList.replace(元のクラス名, 新しいクラス名);

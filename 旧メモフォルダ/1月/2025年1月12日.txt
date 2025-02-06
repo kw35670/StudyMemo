@@ -1,0 +1,24 @@
+【オブジェクト名記法】
+オブジェクト名.プロパティ名　　　ドット記法
+オブジェクト名['プロパティ名']　ブランケット記法
+
+
+【オブジェクト削除方法】
+delete obj.prop;
+delete obj['prop'];
+
+
+【分割代入１】
+const object = { x: 1, y: 2 }
+const { x, y } = object
+
+console.log(x) // 1
+console.log(y) // 2
+
+
+【分割代入２】
+const object = { x: 1, y: 2 }
+const { x: a, y: b } = object
+
+console.log(a) // 1
+console.log(b) // 2

@@ -1,0 +1,18 @@
+【オプショナルなプロパティに対するアクセス】
+exactOptionalPropertyTypesを有効化することで、オプショナルな値にundefinedを代入することができなくなる。
+readonlyをつけて宣言されたプロパティは再代入不可になる。
+
+【variadic Tuple Types】
+配列のスプレッド構文のように、タプル型に要素を透け加えた別のタプル型を作ることができる機能。
+
+【テンプレートリテラル型】
+type HelloStr = `Hello, ${string}`;
+
+const str1: HelloStr = "Hello, world!";
+const str2: HelloStr = "Hello, uhyo";
+// エラー: Type '"Hell, world!"' is not assignable to type '`Hello, ${string}`'.
+const str3: HelloStr = "Hell, world!";
+
+【as const】
+各種リテラル（文字列・数値・真偽値のリテラル、オブジェクトリテラル・配列リテラル）に付加することができ、その値が書き換えを意図していない値であることを表します。
+リテラルの型推論で型を広げてほしくないときに使用することができる。

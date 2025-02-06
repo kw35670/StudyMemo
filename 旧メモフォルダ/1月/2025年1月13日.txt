@@ -1,0 +1,34 @@
+【スプレッド構文】
+const foo = { a: 1, b: 2 };
+
+// オブジェクトのクローン
+const bar = { ...foo }; // => { a: 1, b: 2 }
+
+// プロパティを追加した新しいオブジェクトの生成
+const baz = { ...foo, c: 3 }; // => { a: 1, b: 2, c: 3 }
+
+// オブジェクトのマージ
+const hoge = { ...foo, ...{ c: 3, d: 4 } }; // => { a: 1, b: 2, c: 3, d: 4 }
+
+// 元のオブジェクトに同名プロパティがある場合は置き換わる
+const fuga = { ...foo, b: 3 }; // => { a: 1, b: 3 }
+const piyo = { ...foo, ...{ a: 3, b: 4 } }; // => { a: 3, b: 4 }
+
+
+【console.〇〇】
+console.error エラーを出力
+console.debug 変数などの中身を知りたいとき
+console.warn  警告を出力
+console.table データを表敬式で表示
+console.dir   オブジェクトを折りたたみ式の階層的なリストで表示
+
+
+【アロー関数】
+1. 引数が一つの場合()を省略できる。
+count => { return count++}
+
+2.  処理が一行の場合は{}が省略可能
+ count => return count++
+
+3. 1の場合で、returnだけの場合、returnも省略できる。
+count => count++
