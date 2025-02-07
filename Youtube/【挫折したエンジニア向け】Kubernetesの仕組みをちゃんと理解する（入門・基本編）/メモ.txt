@@ -1,0 +1,106 @@
+【コンポーネント】
+コントロールプレーンとノードの2つで構成される。
+これら２つを総称してKubernetessクラスターと呼ばれる。
+
+
+【コントロールプレーン】
+Kubernetessの心臓部分。動作を担う。
+別名：Admin、Masterとも呼ばれる。
+
+kube-apiserver（API Server）
+    Kubernetess APIを公開する。
+
+etcd
+    Kubernetessクラスタ情報の保存場所。key/valueストア
+
+kube-scheduler
+    Pod（コンテナ）をワーカーノードに割り当てる
+
+kube-controller-manager
+    Kubernetessの操作全般を担当する。
+    （Podを起動したり、障害を検知する。）
+
+cloud-controller-manager
+    クラウド（AWS/GCPなど）の機能と連携する。
+
+
+【ノード】
+実際にコンテナが動作する環境。 別名：ワーカーとも呼ばれる。
+
+kubelet
+    各ノードで実行されるエージェント
+    マスターノードでやり取りして指示に従う。
+
+kube-proxy
+    NodeのNWルール（iptablesなど）を追加、削除、変更している。
+
+コンテナランタイム
+    コンテナを実行するためのソフトウェア
+    例：Docker、Containerd、cri-o
+
+
+【リソース】
+コンテナをうまく管理するために、OSの機能やしくみをリソースと呼ばれるもので抽象化している。
+あくまでも、Kubernetessのが管理するために、定義したオブジェクトで裏側には別のものが動いてる。
+Kubernetessではコンテナを外部公開しているように見せているが、実際は「OSの機能（iptables等）を使ってルールを追加しているだけ」である。
+
+Node
+    ワーカーノードのこと。コンテナが動作する各マシンを管理している。
+    コンテナランタイム、kubelet、kube-proxy
+
+Pod
+    Podはコンテナとネットワーキング（PodのIPアドレス）、共有ストレージのセット。Pod＝コンテナということもある。
+    KubernetesではPodというリソースでコンテナを取り扱っている。
+    Podには複数のコンテナを参加させることが出来る。
+    コンテナ間のデータ交換に共有ストレージ（Volue）でファイルを読み書きする方法がある。
+    コンテナはIPアドレスとポートスペースを共有するため同じポートは使用不可。
+
+ReplicaSet
+    Podのレプリカを作成し、指定した数のPodを維持し続けるリソース。
+    コンテナの起動が早い。同じWebコンテナを複数立てることで急な通信にも対応できる。
+    replica数を設定することで任意の数のPodを立ち上げることが出来る。
+    Podがダウンしても、指定されたレプリカ数になるようにコンテナを起動する。
+
+Deployment
+    複数のReplicaSetを管理して、ローリングアップデートやロールバックなどのデプロイを管理するリソースのこと。
+
+Service
+    Podに対するエンドポイントを割り当てたり、Podへの負荷分散を行うためのリソースである。
+    Kubernetessクラスタ内やクラスタの外から通信をするためのIPアドレスの割り当てを行う。
+    ClusterIP、NodePort、LoadBalancerなどがある。
+
+    ClusterIP
+        Kubernetesクラスタ内からの実で疎通可能なIPアドレスのこと。
+
+    NodePort
+        Kubernetesクラスタ外からも疎通可能なIPアドレスである。
+
+    LoadBalancer
+        外からつながる仮想IPを払いだすことが出来る仕組み。
+        クラウドプロバイダでの利用が前提。
+
+
+【Nginx Podを起動する流れ】
+１，Podの作成を依頼（kubectlやAPIなど）。
+    kube-apiserverに依頼する。
+
+２，ControllerがAPI Serverの変化を検知して別のAPIを呼ぶ。
+    kube-controller-managerがkube-apiserverの変更を検知。
+
+３，kube-schedulerがAPI Serverの変化を検知して、Podをどこのワーカーノードの配置するか指定。
+
+４，kubeletがマスターノードのAPI Serverの動きを定期的にチェックしているので、そこからPodの作成依頼を取得する。
+
+５，kubeletからDocker（コンテナランタイム）へコンテナの作成を依頼。
+
+６，Docker（コンテナランタイム）によってコンテナが作成される。
+
+
+【Nginx Pod用のServiceを作成する流れ】
+１，Serviceの作成を依頼（kubectlやAPIなど）。
+
+２，ControllerがAPI Serverの変化を検知して別のAPIを呼ぶ。
+
+３，kube-proxyがマスターノードのAPI Serverの動きを定期的にチェックしているので、そこからServiceの作成依頼を取得する。
+
+４，kube-proxyによってiptablesにNginx用を外部に公開するためのエンドポイントと負荷分散のルールが追加される。

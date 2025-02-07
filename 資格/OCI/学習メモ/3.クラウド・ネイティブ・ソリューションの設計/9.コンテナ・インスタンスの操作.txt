@@ -1,0 +1,174 @@
+【コンテナ・インスタンスIAMポリシー】
+・権限（正式の権限名は「CONPUTE_CONTAINER_権限名」か「COMPUTE_CONTAINER_INSTANCE_権限名」となる）
+    1,compute-containers
+        INSPECT
+        READ
+        UPDATE
+        START
+        STOP
+        RESTART
+        CREATE
+        DELETE
+        MOVE
+
+    2,compute-container-instances
+        INSPECT
+        READ
+        UPDATE
+        LOG_RETRIEVE
+        CREATE
+        DELETE
+
+・動詞
+    1,compute-containers
+        inspect
+            INSPECT権限の付与
+        read
+            inspectに加えてREAD権限も付与
+        use
+            readに加えてUPDATE,START,STOP,RESTART権限も付与
+        manage
+            すべての権限を付与
+    
+    2,compute-container-instances
+        inspect
+            INSPECT権限の付与
+        read
+            inspectに加えてREAD権限も付与
+        use
+            不明（説明なし）
+        manage
+            すべての権限を付与
+
+・リソース・タイプ
+    個別リソース・タイプ(どちらも複数形のため注意)
+        compute-container-instances
+        compute-containers
+    集約リソース・タイプ
+        compute-container-family
+
+
+【ポリシー構文】
+アクセス・タイプ
+    コンパートメントABCのクラウド・ネットワークとサブネットを使用してコンテナ・インスタンスですべてを行うことが出来るようにする。
+        Allow group ContainerInstanceLaunchers to manage compute-container-family in compartment ABC
+        Allow group ContainerInstanceLaunchers to use virtual-network-family in compartment ABC
+        Allow group ContainerInstanceLaunchers to read repos in tenancy
+
+動的グループの定義
+    コンテナ・インスタンス・サービスで、コンテナ・レジストリのプライベート・リポジトリからイメージを読み取ることが出来るようにする。
+        ALL {resource.type=`computecontainerinstance`}
+        Allow dynamic-group ContainerInstanceDG to read repos in tenancy
+
+
+【コンテナ・インスタンスのシェイプ】
+1,CI.Standard.E3.Flex(プロセッサ2.25GHz AMD EPYCTM 7742 (Rome))
+    OCPU
+        最小：1OCPU
+        最大：64OCPU
+    
+    メモリー（GB）
+        最小：1GBまたはOCPU数と一致する値（いずれか大きい方）
+        最大：OCPUあたり16GB、合計1024GBまで（1OCPUあたりってこと？）
+
+    エフェメラル・ストレージ（GB）
+        15
+
+    最大ネットワーク帯域幅
+        OCPUあたり1Gbps、最大40Gbps
+
+    最大VNIC合計：Linux
+        1VNIC
+
+2,CI.Standard.E4.Flex(プロセッサ2.25GHz AMD EPYCTM 7J43 (Milan))
+    OCPU
+        最小：1OCPU
+        最大：64OCPU
+
+    メモリー（GB）
+        最小：1GBまたはOCPU数と一致する値（いずれか大きい方）
+        最大：OCPUあたり16GB、合計1024GBまで（1OCPUあたりってこと？）
+
+    エフェメラル・ストレージ（GB）
+        15
+
+    最大ネットワーク帯域幅
+        OCPUあたり1Gbps、最大40Gbps
+
+    最大VNIC合計：Linux
+        1VNIC
+
+
+【コンテナ・インスタンス：基本設定】
+ネットワークの構成
+    1,プライマリ・ネットワーク及びサブネット
+        インスタンスを作成する仮想クラウド・ネットワーク（VCN）及びサブネットを指定する。
+            既存の仮想クラウド・ネットワークの選択
+            新規仮想クラウド・ネットワークの作成
+            サブネットのOCIDの入力
+
+    2,パブリックIPv4アドレスの割り当て
+        サブネットがパブリックの場合、オプションでインスタンスにパブリックIPアドレスを割り当てることが出来る。
+
+    3,拡張オプションの表示
+        ネットワーク・セキュリティ・グループを使用してトラフィックを制御
+        プライベートIPアドレスの手動設定
+        クラウド・ネットワーク内のDNSに使用されるホスト名の指定
+
+
+【追加設定】
+拡張オプションの構成
+    1,正常な停止のタイムアウト（秒）
+        コンテナを停止する必要がある場合にコンテナ内のプロセスを正常に終了する必要のある時間を設定する。
+
+    2,コンテナ再起動ポリシー
+        「常時」、「なし」、「失敗」の中から選択する。
+        「常時」は正常終了後も実行されクリティカルなサービスに有効
+
+    3,タグ付け
+        リソースを作成する権限がある場合、そのリソースにフリーフォーム・タグを適用する権限もあります。
+
+
+【コンテナの構成】
+イメージ・オプションの構成
+    1, イメージ・ソースの選択
+        OCIコンテナ・レジストリ
+            コンテナ・イメージを格納、共有及び管理できるOracle管理のレジストリ。
+        外部レジストリ
+            サードパーティ・ベンダーが提供するイメージを選択できる。（DockerHubなど）
+    
+    2,環境変数のセクション
+        コンテナによって使用される環境変数を設定できる。
+            例：MYSQL_PASSWORD=wordpress, NGINX_PORT=80
+
+詳細設定の構成
+    「リソース」タブ
+        コンテナが消費するリソースの量の制限を「絶対」または「パーセンテージ」で構成する。
+        デフォルトでは、コンテナはコンテナ・インスタンス内のすべてのリソースを使用できる。
+
+    「起動オプション」タブ
+        コンテナの作業ディレクトリ及びINTRYPOINT引数を構成する。
+
+    「セキュリティ」タブ
+        コンテナのセキュリティ構成を指定する。
+
+
+【コンテナ・インスタンスの操作】
+    1,設定
+        コンテナ・インスタンスIAMポリシーの設定
+
+    2,作成
+        コンテナ・インスタンスの作成
+            各コンテナ・インスタンスには最大60個のコンテナを作成できる。
+    
+    3,管理
+        コンテナ・インスタンスの起動、停止及び再起動
+            コンテナ・インスタンスは、コンテナ・インスタンスの停止時に請求を一時停止する標準シェイプを使用する。
+
+    4,メトリック
+        コンテナ・インスタンスのメトリック
+            メトリックを使用して、OICコンテナ・インスタンスの健全性、容量及びパフォーマンスをモニターできる。
+
+    5,削除
+        コンテナ・インスタンスの削除
+            コンテナがサービスによって削除されると、エフェメラル・ストレージ上のデータは失われます。
