@@ -55,3 +55,7 @@ Dockerfileで一度しか使えない。
 RUN： ビルド時に実行されるコマンド。  
 CMD： コンテナ作成時に実行されるコマンド。
 
+## ENVで環境変数を設定する
+```terminal
+ENV {key}={value} {key}={value} 
+```
